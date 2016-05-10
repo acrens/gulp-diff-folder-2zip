@@ -18,5 +18,5 @@ require('gulp-diff-floder-2zip')(gulp, {
     dest_folder: dest_folder //目标生成目录
 });
 
-gulp.task('publish', ['diff-2zip-update] , function(){});
+gulp.task('publish', ['diff-2zip-update'] , function(){});
 ```
