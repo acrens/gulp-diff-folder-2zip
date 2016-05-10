@@ -12,8 +12,8 @@ function incremental_update(options) {
 
         if (!options.version_folder || !options.name || !options.first_version || !options.last_version || !options.dest_folder) {
             msg = 'config option miss.';
-            gutil.log('gulp-diff-floder-2zip: ' + msg);
-            this.emit('error', new gutil.PluginError('gulp-diff-floder-2zip', msg));
+            gutil.log('gulp-diff-folder-2zip: ' + msg);
+            this.emit('error', new gutil.PluginError('gulp-diff-folder-2zip', msg));
             this.push(file);
             cb();
         }
@@ -35,7 +35,7 @@ function incremental_update(options) {
 
                             var output = fs.createWriteStream(tasks[i][2]);
                             archive.pipe(output);
-                            gutil.log('gulp-diff-floder-2zip: ' + 'success build patch ' + tasks[i][2]);
+                            gutil.log('gulp-diff-folder-2zip: ' + 'success build patch ' + tasks[i][2]);
                             if (i === len - 1) {
                                 this.push(file);
                                 cb();
@@ -48,8 +48,8 @@ function incremental_update(options) {
                 return soFar.then(f);
             }, Q());
         } catch (e) {
-            gutil.log('gulp-diff-floder-2zip: ' + e.message);
-            this.emit('error', new gutil.PluginError('gulp-diff-floder-2zip', e.message));
+            gutil.log('gulp-diff-folder-2zip: ' + e.message);
+            this.emit('error', new gutil.PluginError('gulp-diff-folder-2zip', e.message));
             this.push(file);
             cb();
         }
@@ -105,7 +105,7 @@ function diff_2zip_update(gulp, config) {
     gulp.task('diff-2zip-update', function() {
         var config = getConfig(config_path, config.name);
         var zip = require('gulp-zip');
-        var diff_2zip_update = require('gulp-diff-floder-2zip');
+        var diff_2zip_update = require('gulp-diff-folder-2zip');
         gulp.src(config.assets_folder + '/**')
             .pipe(zip(config.name))
             .pipe(gulp.dest(config.publish_folder + '/' + version))

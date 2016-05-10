@@ -1,13 +1,13 @@
 {
-    "name": "gulp-diff-floder-2zip",
+    "name": "gulp-diff-folder-2zip",
     "version": "0.0.1",
     "description": "A gulp plugin for tow folder diff to zip.",
     "keywords": [
         "gulpplugin",
         "zip"
     ],
-    "homepage": "https://github.com/allenchengren/gulp-diff-floder-2zip",
-    "bugs": "https://github.com/allenchengren/gulp-diff-floder-2zip/issues",
+    "homepage": "https://github.com/allenchengren/gulp-diff-folder-2zip",
+    "bugs": "https://github.com/allenchengren/gulp-diff-folder-2zip/issues",
     "author": {
         "name": "acrens",
         "url": "https://github.com/allenchengren"
@@ -15,7 +15,7 @@
     "main": "index.js",
     "repository": {
         "type": "git",
-        "url": "git://github.com/allenchengren/gulp-diff-floder-2zip.git"
+        "url": "git://github.com/allenchengren/gulp-diff-folder-2zip.git"
     },
     "scripts": {
         "test": "mocha test.js"

@@ -1,17 +1,17 @@
-# gulp-diff-floder-2zip
+# gulp-diff-folder-2zip
 
 A gulp plugin for assets incremental update
 
 ## Install 
 
 ```shell
-npm install gulp-diff-floder-2zip --save-dev
+npm install gulp-diff-folder-2zip --save-dev
 ```
 
 ## Usage
 
 ```javascript
-require('gulp-diff-floder-2zip')(gulp, {
+require('gulp-diff-folder-2zip')(gulp, {
     version_folder : version_folder,//资源发布目录
     name : 'article_detail.zip',//zip包名
     assets_folder : assets, //本地资源目录,
