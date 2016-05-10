@@ -102,7 +102,7 @@ function diff_2zip_update(gulp, config) {
     }
 
     var config_path = path.resolve(config.version_folder, './config.json');
-    gulp.task('assets-incremental-update', function() {
+    gulp.task('diff-2zip-update', function() {
         var config = getConfig(config_path, config.name);
         var zip = require('gulp-zip');
         var diff_2zip_update = require('gulp-diff-floder-2zip');
