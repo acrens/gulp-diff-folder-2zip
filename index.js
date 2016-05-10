@@ -1,0 +1,125 @@
+var through2 = require('through2');
+var gutil = require('gulp-util');
+var path = require('path');
+var fs = require('fs');
+var Q = require('q');
+var diff = require('node-folder-diff');
+
+function incremental_update(options) {
+
+    return through2.obj(function(file, enc, cb) {
+        var msg;
+
+        if (!options.version_folder || !options.name || !options.first_version || !options.last_version || !options.dest_folder) {
+            msg = 'config option miss.';
+            gutil.log('gulp-diff-floder-2zip: ' + msg);
+            this.emit('error', new gutil.PluginError('gulp-diff-floder-2zip', msg));
+            this.push(file);
+            cb();
+        }
+
+        var first_version = options.first_version;
+        var last_version = options.last_version;
+        var tasks = genDiffTask(options.version_folder, first_version, last_version, options.dest_folder, options.name);
+        var q_tasks = [];
+        try {
+            for (var i = 0, len = tasks.length; i < len; i++) {
+
+                q_tasks.push((function(i) {
+                    return function() {
+                        return diff.diff(tasks[i][0], tasks[i][1]).then(function(archive) {
+
+                            if (!fs.existsSync(path.dirname(tasks[i][2]))) {
+                                fs.mkdirSync(path.dirname(tasks[i][2]));
+                            }
+
+                            var output = fs.createWriteStream(tasks[i][2]);
+                            archive.pipe(output);
+                            gutil.log('gulp-diff-floder-2zip: ' + 'success build patch ' + tasks[i][2]);
+                            if (i === len - 1) {
+                                this.push(file);
+                                cb();
+                            }
+                        });
+                    }
+                })(i));
+            }
+            q_tasks.reduce(function(soFar, f) {
+                return soFar.then(f);
+            }, Q());
+        } catch (e) {
+            gutil.log('gulp-diff-floder-2zip: ' + e.message);
+            this.emit('error', new gutil.PluginError('gulp-diff-floder-2zip', e.message));
+            this.push(file);
+            cb();
+        }
+    });
+}
+
+function genDiffTask(folder, first_version, last_version, dest_folder, basename) {
+
+    function genPath(folder, version, basename) {
+        return path.resolve(folder, './' + version + '/' + basename);
+    }
+
+    function genDestPath(folder, basename){
+        return path.resolve(folder, './' + basename);
+    }
+
+    var tasks = [];
+    first_version = parseInt(first_version);
+    last_version = parseInt(last_version);
+    tasks.push([genPath(folder, first_version, basename), genPath(folder, last_version, basename), genDestPath(dest_folder, basename)]);
+
+    return tasks;
+}
+
+function getConfig(config_path, name) {
+    var config = null;
+
+    if (fs.existsSync(config_path)) {
+        var content = fs.readFileSync(config_path, {
+            encoding: 'utf8'
+        });
+        config = JSON.parse(content);
+    } else {
+        config = {
+            file_name: name,
+            first_version: 1,
+            last_version: 0
+        };
+    }
+    config.last_version++;
+    fs.writeFileSync(config_path, JSON.stringify(config));
+
+    return config;
+}
+
+function diff_2zip_update(gulp, config) {
+
+    if (!config.version_folder || !config.name || !config.assets_folder || !config.dest_folder) {
+        throw new Error('must provide version_folder, name, assets_folder, dest_folder in config options');
+    }
+
+    var config_path = path.resolve(config.version_folder, './config.json');
+    gulp.task('assets-incremental-update', function() {
+        var config = getConfig(config_path, config.name);
+        var zip = require('gulp-zip');
+        var diff_2zip_update = require('gulp-diff-floder-2zip');
+        gulp.src(config.assets_folder + '/**')
+            .pipe(zip(config.name))
+            .pipe(gulp.dest(config.publish_folder + '/' + version))
+            .pipe(incremental_update({
+                version_folder: config.version_folder,
+                name: config.name,
+                first_version: config.first_version,
+                last_version: config.last_version,
+                dest_folder: config.dest_folder
+            }));
+    });
+
+    return incremental_update;
+}
+
+
+module.exports = diff_2zip_update;
