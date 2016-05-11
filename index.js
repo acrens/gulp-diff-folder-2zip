@@ -30,7 +30,7 @@ function incremental_update(options) {
 
                         if (tasks[i][0] == tasks[i][1]) {
                             var output = fs.createWriteStream(tasks[i][2]);
-                            gulp.src(tasks[i][0]).pipe(output);
+                            gulp.src(options.version_folder + first_version + '/**').pipe(output);
                             gutil.log('gulp-diff-folder-2zip: ' + 'success build patch ' + tasks[i][2]);
                             this.push(file);
                             cb();
@@ -65,16 +65,15 @@ function incremental_update(options) {
     });
 }
 
+function genPath(folder, version, basename) {
+    return path.resolve(folder, './' + version + '/' + basename);
+}
+
+function genDestPath(folder, basename) {
+    return path.resolve(folder, './' + basename);
+}
+
 function genDiffTask(folder, first_version, last_version, dest_folder, basename) {
-
-    function genPath(folder, version, basename) {
-        return path.resolve(folder, './' + version + '/' + basename);
-    }
-
-    function genDestPath(folder, basename) {
-        return path.resolve(folder, './' + basename);
-    }
-
     var tasks = [];
     first_version = parseInt(first_version);
     last_version = parseInt(last_version);
