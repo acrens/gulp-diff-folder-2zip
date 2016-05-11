@@ -1,6 +1,6 @@
 {
     "name": "gulp-diff-folder-2zip",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "description": "A gulp plugin for tow folder diff to zip.",
     "main": "index.js",
     "scripts": {

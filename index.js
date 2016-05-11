@@ -53,9 +53,9 @@ function incremental_update(options) {
                     }
                 })(i));
             }
-            q_tasks.reduce(function(soFar, f) {
-                return soFar.then(f);
-            }, Q());
+            // q_tasks.reduce(function(soFar, f) {
+            //     return soFar.then(f);
+            // }, Q());
         } catch (e) {
             gutil.log('gulp-diff-folder-2zip: ' + e.message);
             this.emit('error', new gutil.PluginError('gulp-diff-folder-2zip', e.message));
