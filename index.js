@@ -103,17 +103,17 @@ function diff_2zip_update(gulp, config) {
 
     var config_path = path.resolve(config.version_folder, './config.json');
     gulp.task('diff-2zip-update', function() {
-        var config = getConfig(config_path, config.name);
+        var config_file = getConfig(config_path, config.name);
         var zip = require('gulp-zip');
         var diff_2zip_update = require('gulp-diff-folder-2zip');
         gulp.src(config.assets_folder + '/**')
-            .pipe(zip(config.name))
+            .pipe(zip(config_file.file_name))
             .pipe(gulp.dest(config.publish_folder + '/' + version))
             .pipe(incremental_update({
                 version_folder: config.version_folder,
-                name: config.name,
-                first_version: config.first_version,
-                last_version: config.last_version,
+                name: config_file.file_name,
+                first_version: config_file.first_version,
+                last_version: config_file.last_version,
                 dest_folder: config.dest_folder
             }));
     });
