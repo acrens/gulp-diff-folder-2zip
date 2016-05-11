@@ -27,12 +27,6 @@ function incremental_update(options) {
 
                 q_tasks.push((function(i) {
                     return function() {
-                        gutil.log('gulp-diff-folder-2zip: ' + 'first_version ' + first_version + ' - last_version ' + last_version);
-                        if (first_version == last_version) {
-                            gutil.log('gulp-diff-folder-2zip: ' + 'first_version and last_version same ' + tasks[i][0]);
-                            tasks[i][1] = genPath(options.version_folder, parseInt(last_version) + 1, basename);
-                            fs.writeFileSync(tasks[i][1], '');
-                        }
 
                         return diff.diff(tasks[i][0], tasks[i][1]).then(function(archive) {
 
@@ -112,6 +106,11 @@ function diff_2zip_update(gulp, config) {
         var config_file = getConfig(config_path, config.name);
         var zip = require('gulp-zip');
         var diff_2zip_update = require('gulp-diff-folder-2zip');
+
+        gulp.src(config.assets_folder + '/**')
+            .pipe(zip(config_file.file_name))
+            .pipe(gulp.dest(config.dest_folder));
+
         gulp.src(config.assets_folder + '/**')
             .pipe(zip(config_file.file_name))
             .pipe(gulp.dest(config.version_folder + '/' + config_file.last_version))
