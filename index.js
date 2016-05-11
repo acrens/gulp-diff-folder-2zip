@@ -29,9 +29,14 @@ function incremental_update(options) {
                     return function() {
 
                         if (tasks[i][0] == tasks[i][1]) {
-                            tasks[i][1] = genPath(options.version_folder, parseInt(last_version) + 1, basename)
+                            tasks[i][1] = genPath(options.version_folder, parseInt(last_version) + 1, basename);
+
+                            if (!fs.existsSync(path.dirname(tasks[i][1]))) {
+                                fs.mkdirSync(path.dirname(tasks[i][1]));
+                            }
+                            gutil.log('gulp-diff-folder-2zip: ' + 'first_version and last_version same ' + tasks[i][0]);
                         }
-                        
+
                         return diff.diff(tasks[i][0], tasks[i][1]).then(function(archive) {
 
                             if (!fs.existsSync(path.dirname(tasks[i][2]))) {
