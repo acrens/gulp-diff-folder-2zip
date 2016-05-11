@@ -27,20 +27,28 @@ function incremental_update(options) {
 
                 q_tasks.push((function(i) {
                     return function() {
-                        return diff.diff(tasks[i][0], tasks[i][1]).then(function(archive) {
 
-                            if (!fs.existsSync(path.dirname(tasks[i][2]))) {
-                                fs.mkdirSync(path.dirname(tasks[i][2]));
-                            }
-
-                            var output = fs.createWriteStream(tasks[i][2]);
-                            archive.pipe(output);
+                        if (tasks[i][0] == tasks[i][1]) {
+                            gulp.src(tasks[i][0]).pipe(gulp.dest(tasks[i][2]));
                             gutil.log('gulp-diff-folder-2zip: ' + 'success build patch ' + tasks[i][2]);
-                            if (i === len - 1) {
-                                this.push(file);
-                                cb();
-                            }
-                        });
+                            this.push(file);
+                            cb();
+                        } else {
+                            return diff.diff(tasks[i][0], tasks[i][1]).then(function(archive) {
+
+                                if (!fs.existsSync(path.dirname(tasks[i][2]))) {
+                                    fs.mkdirSync(path.dirname(tasks[i][2]));
+                                }
+
+                                var output = fs.createWriteStream(tasks[i][2]);
+                                archive.pipe(output);
+                                gutil.log('gulp-diff-folder-2zip: ' + 'success build patch ' + tasks[i][2]);
+                                if (i === len - 1) {
+                                    this.push(file);
+                                    cb();
+                                }
+                            });
+                        }
                     }
                 })(i));
             }
@@ -62,7 +70,7 @@ function genDiffTask(folder, first_version, last_version, dest_folder, basename)
         return path.resolve(folder, './' + version + '/' + basename);
     }
 
-    function genDestPath(folder, basename){
+    function genDestPath(folder, basename) {
         return path.resolve(folder, './' + basename);
     }
 
