@@ -28,20 +28,22 @@ function incremental_update(options) {
                 q_tasks.push((function(i) {
                     return function() {
 
-                        return diff.diff(tasks[i][0], tasks[i][1]).then(function(archive) {
+                        if (last_version != 1) {
+                            return diff.diff(tasks[i][0], tasks[i][1]).then(function(archive) {
 
-                            if (!fs.existsSync(path.dirname(tasks[i][2]))) {
-                                fs.mkdirSync(path.dirname(tasks[i][2]));
-                            }
+                                if (!fs.existsSync(path.dirname(tasks[i][2]))) {
+                                    fs.mkdirSync(path.dirname(tasks[i][2]));
+                                }
 
-                            var output = fs.createWriteStream(tasks[i][2]);
-                            archive.pipe(output);
-                            gutil.log('gulp-diff-folder-2zip: ' + 'success build patch ' + tasks[i][2]);
-                            if (i === len - 1) {
-                                this.push(file);
-                                cb();
-                            }
-                        });
+                                var output = fs.createWriteStream(tasks[i][2]);
+                                archive.pipe(output);
+                                gutil.log('gulp-diff-folder-2zip: ' + 'success build patch ' + tasks[i][2]);
+                                if (i === len - 1) {
+                                    this.push(file);
+                                    cb();
+                                }
+                            });
+                        }
                     }
                 })(i));
             }
