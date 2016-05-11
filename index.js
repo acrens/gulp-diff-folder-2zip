@@ -29,33 +29,29 @@ function incremental_update(options) {
                     return function() {
 
                         if (tasks[i][0] == tasks[i][1]) {
-                            var output = fs.createWriteStream(tasks[i][2]);
-                            gulp.src(options.version_folder + first_version + '/**').pipe(output);
-                            gutil.log('gulp-diff-folder-2zip: ' + 'success build patch ' + tasks[i][2]);
-                            this.push(file);
-                            cb();
-                        } else {
-                            return diff.diff(tasks[i][0], tasks[i][1]).then(function(archive) {
-
-                                if (!fs.existsSync(path.dirname(tasks[i][2]))) {
-                                    fs.mkdirSync(path.dirname(tasks[i][2]));
-                                }
-
-                                var output = fs.createWriteStream(tasks[i][2]);
-                                archive.pipe(output);
-                                gutil.log('gulp-diff-folder-2zip: ' + 'success build patch ' + tasks[i][2]);
-                                if (i === len - 1) {
-                                    this.push(file);
-                                    cb();
-                                }
-                            });
+                            tasks[i][1] = genPath(options.version_folder, parseInt(last_version) + 1, basename)
                         }
+                        
+                        return diff.diff(tasks[i][0], tasks[i][1]).then(function(archive) {
+
+                            if (!fs.existsSync(path.dirname(tasks[i][2]))) {
+                                fs.mkdirSync(path.dirname(tasks[i][2]));
+                            }
+
+                            var output = fs.createWriteStream(tasks[i][2]);
+                            archive.pipe(output);
+                            gutil.log('gulp-diff-folder-2zip: ' + 'success build patch ' + tasks[i][2]);
+                            if (i === len - 1) {
+                                this.push(file);
+                                cb();
+                            }
+                        });
                     }
                 })(i));
             }
-            // q_tasks.reduce(function(soFar, f) {
-            //     return soFar.then(f);
-            // }, Q());
+            q_tasks.reduce(function(soFar, f) {
+                return soFar.then(f);
+            }, Q());
         } catch (e) {
             gutil.log('gulp-diff-folder-2zip: ' + e.message);
             this.emit('error', new gutil.PluginError('gulp-diff-folder-2zip', e.message));
