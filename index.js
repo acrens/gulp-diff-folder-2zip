@@ -109,11 +109,11 @@ function diff_2zip_update(gulp, config) {
         var zip = require('gulp-zip');
         var diff_2zip_update = require('gulp-diff-folder-2zip');
 
-        gulp.src(config.assets_folder + '/**')
+        gulp.src(config.assets_folder)
             .pipe(zip(config_file.file_name))
             .pipe(gulp.dest(config.dest_folder));
 
-        gulp.src(config.assets_folder + '/**')
+        gulp.src(config.assets_folder)
             .pipe(zip(config_file.file_name))
             .pipe(gulp.dest(config.version_folder + '/' + config_file.last_version))
             .pipe(incremental_update({
