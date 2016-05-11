@@ -29,7 +29,8 @@ function incremental_update(options) {
                     return function() {
 
                         if (tasks[i][0] == tasks[i][1]) {
-                            gulp.src(tasks[i][0]).pipe(gulp.dest(tasks[i][2]));
+                            var output = fs.createWriteStream(tasks[i][2]);
+                            gulp.src(tasks[i][0]).pipe(output);
                             gutil.log('gulp-diff-folder-2zip: ' + 'success build patch ' + tasks[i][2]);
                             this.push(file);
                             cb();
